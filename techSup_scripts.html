@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Skyeng | Vimbox Tools, Alexander Nester (ver. 0.13.3, build 2022.7.1033)</title>
+        <author> Vimbox Tools | Alexander Nester </author>
+        <meta charset="utf-8">
+        <meta versionNumber="0.13.3">
+        <meta versionState="public test">
+        <meta versionYearIndex="2022">
+        <meta versionMonthIndex="7">
+        <meta autoUpdate="false">
+        <meta webhooks="false">
+        
+        
+
+        <style>
+            @import url("https://fonts.googleapis.com/css?family=Montserrat&display=swap");
+            
+
+            body 
+            {
+                width: 256px;
+                height:256px;
+
+                
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+
+                border-radius: 10px;
+
+                overflow: hidden;
+                margin: auto;
+            }
+
+            span {
+                line-height: 50px;
+                font-family: "Montserrat", sans-serif;
+                font-size: 16px;
+                font-weight: semibold;
+
+                text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.3);
+
+                position:relative;
+                top: -11px;
+
+                color: rgb(245, 245, 245);
+            }
+
+            p{
+                font-family: "Montserrat", sans-serif;
+                font-size: 20px;
+                text-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+            }
+
+            .regularButton{
+                background-color: #2196F3;
+
+                width: 128px;
+                height: 28px;
+
+                padding: 0;
+                border: 0;
+
+                border-radius: 4px;
+                cursor: pointer;
+
+                margin-bottom: 18px;
+                position: relative;
+
+            }
+        </style>        
+    </head>
+
+    <body>
+
+
+        <p id="bigText"> TechSup Vimbox Tools </p>
+        <button class="regularButton" id="techSup_scripts"> <span> Шаблоны </span> </button>
+        <button class="regularButton" id="techSup_instruments"> <span> Инструменты </span> </button>
+        <button class="regularButton" id="techSup_help"> <span> <i style="margin-right: 4px">#Справка</i> </span> </button>
+    
+
+        <div style="display: flex; flex-direction:row; text-align: left; margin-bottom: 0px; grid-gap: 8px; margin-top: -16px;">
+
+
+                <div> <p> Текущий статус: </p> </div>
+
+                <div id="currentStatus" 
+                     style="background-color: black; 
+                            width: 19px; 
+                            height: 19px; 
+                            margin-top: 24px; 
+                            border-radius: 4px; 
+                            box-shadow: 0 0 4px rgba(0,0,0,0.2);">
+            
+                </div>
+
+        </div>
+
+
+    </body>
+
+
+
+
+
+
+
+
+
+    <script src="script.js"></script>
+</html>
