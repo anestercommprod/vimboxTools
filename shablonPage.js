@@ -3,7 +3,7 @@ let selectorElement;
 let newString = '#UDF';
 let newSelectorOptionName;
 
-const sheetId = '1vSY4mgMXcwP05RmnTd9uUpSyOyrxjZ_bYmHb3zsDVwg';
+var sheetId = '1vSY4mgMXcwP05RmnTd9uUpSyOyrxjZ_bYmHb3zsDVwg';
 var curShablon_index = 1;
 var maxShablon_index = 3;
 
@@ -14,6 +14,18 @@ document.getElementById("agreementLinker").onclick = function()
 {
     chrome.windows.create({'url': '/support/privacyStatements.html', 'type': 'popup'}, function(window) {});
 }
+
+// adding variables to cache
+if(localStorage.getItem('tools_showLegacyToolsStatus') == null)
+{
+    localStorage.setItem('tools_showLegacyToolsStatus', 'false');
+    document.getElementById('tools_showLegacyTools_checkbox').checked = false;
+}
+if(localStorage.getItem('agreementStatus_2022_7_0133') == null)
+{
+    localStorage.setItem('agreementStatus_2022_7_0133', 'true');
+    alert('Расширение Vimbox Tools v2022.7.0133 было установлено впервые либо сброшено. \nЛицензионое соглашение на использование ПО автоматически подписано. \nПодробно ознакомиться с лицензией пользования можно ознакомиться в пункте "#Справка" > "Заявления конфиденцииальности".');
+}
 if(localStorage.getItem('agreementStatus_2022_7_0133') == 'false'){
     document.getElementById("declinedAgreement").style = "display: block; height: 144px;";
     document.getElementById("mainPage").style = "display: none;";
@@ -22,10 +34,17 @@ if(localStorage.getItem('agreementStatus_2022_7_0133') == 'true'){
     document.getElementById("declinedAgreement").style = "display: none;";
     document.getElementById("mainPage").style = "display: block;";
 }
+if(localStorage.getItem("tools_googleSpreadSheetHash") != null)
+{
+    sheetId = localStorage.getItem("tools_googleSpreadSheetHash");
+}
 console.log(localStorage.getItem('agreementStatus_2022_7_0133'));
 
-//if(localStorage.getItem(''))
 
+document.getElementById('techSup_adminLinks').onclick =  function()
+{
+    alert('Этот пункт пока всё еще в разработке.');
+}
 
 setTimeout(function()
         {   
@@ -68,38 +87,45 @@ function init() {
         .then(rep => {
             results = JSON.parse(/(?<=\()(.*?)(?=\);)/.exec(rep)[0]);
             newResults = results;
-
-            //newSelectorOptionName = results.table.rows[curShablon_index].c[1].v;
-            //newString = results.table.rows[curShablon_index].c[0].v;
-
-            //maxShablon_index = newResults.table.rows[0].c[2].v;
-            //console.log(maxShablon_index);
-            //console.log(newSelectorOptionName);
         })
-}; init();
+};
 
 
 function addSelectorOption(){   
     selectorElement = document.getElementById('techSup_shablony_selector'); 
 
-    for (var i = 1; i<=maxShablon_index; i++){
-        curShablon_index = i;
+    try
+    {
+        for (var i = 1; i<=maxShablon_index; i++){
+            curShablon_index = i;
+    
+            if(newResults == null)
+            {
+                init();
+            }
+    
+            newSelectorOptionName = newResults.table.rows[curShablon_index].c[1].v;
+            var opt = document.createElement('option');
+            opt.value = newSelectorOptionName + "_" + i;
+            opt.innerHTML = newSelectorOptionName;
+            opt.id = "selectorOption_" + i;
+            selectorElement.appendChild(opt);
 
-        newSelectorOptionName = newResults.table.rows[curShablon_index].c[1].v;
+            console.log(i);
+        }
+    }
+    catch(e)
+    {
+        document.getElementById("curShablonText").innerHTML = 'произошла ошибка при парсинге, попробуй ещё раз. <br><br>Если не помогло, сбрось расширение перейдя в "Инструменты".';
+
         var opt = document.createElement('option');
-        opt.value = newSelectorOptionName + "_" + i;
-        opt.innerHTML = newSelectorOptionName;
-        opt.id = "selectorOption_" + i;
+        opt.value = newSelectorOptionName + "_" + 1;
+        opt.innerHTML = '#UDF!';
+        opt.id = "selectorOption_" + 1;
         selectorElement.appendChild(opt);
-
-        console.log(i);
     }
 };
-setTimeout(function()
-{   
-    
-    addSelectorOption();
-}, 512);
+
 function checkCurrentSelectorState(){
     selectorElement.options[selectorElement.selectedIndex].value;
 
@@ -112,30 +138,43 @@ function checkCurrentSelectorState(){
 
     document.getElementById("curShablonText").innerHTML = results.table.rows[curShablon_index].c[0].v;
 }
-setTimeout(function(){
-    curShablon_index = 1;
-    checkCurrentSelectorState();
-}, 666);
+
 
 
 
 document.getElementById("techSup_shablony_bigText").onclick = function()
 {
-    document.getElementById("mainPage").style = "";
+    document.getElementById("mainPage").style = "display: block;";
     document.getElementById("tsScripts").style = "display: none;";
     document.getElementById("tsInstruments").style = "display: none;";
 }
 document.getElementById("techSup_instruments_bigText").onclick = function()
 {
-    document.getElementById("mainPage").style = "";
+    document.getElementById("mainPage").style = "display: block";
     document.getElementById("tsScripts").style = "display: none;";
     document.getElementById("tsInstruments").style = "display: none;";
 }
 document.getElementById("techSup_scripts").onclick = function()
 {
+    removePrevoiusOptionsFromSelector();
+
     document.getElementById("mainPage").style = "display: none;";
     document.getElementById("tsScripts").style = "";
     document.getElementById("tsInstruments").style = "display: none;";
+    
+    setTimeout(function()
+    {   
+        init();
+    }, 50);
+
+    setTimeout(function()
+    {   
+        addSelectorOption();
+    }, 500);
+    setTimeout(function(){
+        curShablon_index = 1;
+        checkCurrentSelectorState();
+    }, 600);
 }
 document.getElementById("techSup_instruments").onclick = function()
 {
@@ -152,7 +191,18 @@ document.getElementById("techSup_help").onclick = function()
 
 
 
+function removePrevoiusOptionsFromSelector()
+{
+    for (let i = 1; i < maxShablon_index+Number(1); i++) 
+    {
+        if(document.getElementById('selectorOption_'+i))
+        {
+            document.getElementById('selectorOption_'+i).remove();
+        }
+    }
 
+    document.getElementById('curShablonText').innerHTML = 'fetching...';
+}
 
 
 
@@ -282,6 +332,8 @@ function resetTools()
     localStorage.removeItem('tools_testUser_teacherVimbox');
     localStorage.removeItem('tools_testUser_teacherSkysmart');
     localStorage.removeItem('tools_googleSpreadSheetHash');
+    localStorage.removeItem('agreementStatus_2022_7_0133');
+    localStorage.removeItem('tools_showLegacyToolsStatus');
 }
 function initTools()
 {
@@ -302,6 +354,7 @@ function initTools()
     document.getElementById('tsInst_testTeacherVimboxID').value = localStorage.getItem("tools_testUser_teacherVimbox");
     document.getElementById('tsInst_testTeacherSkysmartID').value = localStorage.getItem("tools_testUser_teacherSkysmart");
     document.getElementById('tsInst_googleSpreadSheetHash').value = localStorage.getItem("tools_googleSpreadSheetHash");
+    sheetId = localStorage.getItem("tools_googleSpreadSheetHash");
 
     if(localStorage.getItem('tools_showLegacyToolsStatus') == 'false')
     {
